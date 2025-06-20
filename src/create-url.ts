@@ -18,7 +18,7 @@ const validateApiKey = (authHeader: string | undefined): boolean => {
 
   // In production, you'd validate against a database or service
   // For this demo, we'll use environment variables
-  const validApiKeys = (process.env.VALID_API_KEYS || '').split(',');
+  const validApiKeys = (process.env.VALID_API_KEYS).split(',');
   
   return validApiKeys.includes(token.trim());
 };
