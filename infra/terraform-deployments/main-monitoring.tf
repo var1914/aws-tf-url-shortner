@@ -1,13 +1,11 @@
 # CloudWatch Log Groups
-resource "aws_cloudwatch_log_group" "lambda_logs" {
-  for_each = local.apis
-  name              = "/aws/lambda/${each.value.function_name}-${var.environment}"
-  retention_in_days = 7
-}
-
 resource "aws_cloudwatch_log_group" "api_gw_logs" {
   name              = "/aws/apigateway/${local.project_name}-api-${var.environment}"
   retention_in_days = 7
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
 }
 
 # CloudWatch Alarms
@@ -28,6 +26,10 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   dimensions = {
     FunctionName = aws_lambda_function.this[each.key].function_name
   }
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
 }
 
 resource "aws_cloudwatch_metric_alarm" "api_gateway_4xx" {
@@ -44,6 +46,10 @@ resource "aws_cloudwatch_metric_alarm" "api_gateway_4xx" {
 
   dimensions = {
     ApiName = aws_api_gateway_rest_api.this.name
+  }
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
   }
 }
 
@@ -62,11 +68,19 @@ resource "aws_cloudwatch_metric_alarm" "api_gateway_latency" {
   dimensions = {
     ApiName = aws_api_gateway_rest_api.this.name
   }
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
 }
 
 # SNS Topic for Alerts
 resource "aws_sns_topic" "alerts" {
   name = "${local.project_name}-alerts-${var.environment}"
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
 }
 
 resource "aws_sns_topic_subscription" "email_alerts" {

@@ -1,6 +1,10 @@
 ## API Gateway
 resource "aws_api_gateway_rest_api" "this" {
   name = "${local.project_name}-api-${var.environment}"
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
 }
 
 # API Gateway resources and methods for both create and redirect URLs APIs

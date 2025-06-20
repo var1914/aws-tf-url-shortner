@@ -16,10 +16,6 @@ resource "aws_lambda_function" "this" {
     Environment = var.environment
     Project     = local.project_name
   }
-  depends_on = [ 
-    aws_iam_role_policy_attachment.this,
-    aws_iam_role_policy.lambda_dynamodb
-   ]
 }
 
 ## IAM 
