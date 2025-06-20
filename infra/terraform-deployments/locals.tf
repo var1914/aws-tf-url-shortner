@@ -12,7 +12,7 @@ locals {
         authorization = "AWS_IAM"
     }
     redirect_url = {
-        filename         = "${path.root}/../../redirect.zip"
+        filename         = "${path.root}/../../redirect-url.zip"
         function_name    = "${local.project_name}-redirect-${var.environment}"
         handler         = "redirect-url.handler"
         timeout         = 5
