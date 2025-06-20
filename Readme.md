@@ -21,7 +21,7 @@ Simple serverless setup: API Gateway → Lambda → DynamoDB. Handles URL creati
 │   └── versions.tf         # Terraform version constraints
 ├── src/
 ├── ├── create-url.ts           # URL creation Lambda
-├── ├── edirect-url.ts         # URL redirect Lambda
+├── ├── redirect-url.ts         # URL redirect Lambda
 ├── package.json
 └── README.md
 ```
@@ -78,5 +78,7 @@ Set these under dev.tfvar/prod.tfvar:
 - `envenvironment`: Environment Name
 
 Note: 
-### I have not `api_keys` as part of git repo, just following best practise, but in your local setup you can and deploy...
-### In real world, keys are managed using secrets manager or vaults, but for demo and time constraint, it will add to future enhancements
+- I have not added `api_keys` as part of git repo, just following best practise, but in your local setup you can add and deploy...
+- In real world, keys are managed using secrets manager or vaults, but for demo and time constraint, I will add to future enhancements
+- CORS OPTIONS method not defined in API Gateway - handled in Lambda, In production, consider adding OPTIONS method for better browser compatibility
+- Need to Add AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY secrets in github repo settings, to make CICD working
