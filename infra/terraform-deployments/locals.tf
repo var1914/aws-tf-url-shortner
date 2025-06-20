@@ -3,7 +3,7 @@ locals {
   table_name = "${local.project_name}-${var.environment}"
   apis = {
     create_url = {
-        filename = "create-url.zip"
+        filename = "${path.root}/../../create-url.zip"
         function_name    = "${local.project_name}-create-${var.environment}"
         handler         = "create-url.handler"
         timeout         = 10
@@ -12,7 +12,7 @@ locals {
         authorization = "AWS_IAM"
     }
     redirect_url = {
-        filename         = "redirect.zip"
+        filename         = "${path.root}/../../redirect.zip"
         function_name    = "${local.project_name}-redirect-${var.environment}"
         handler         = "redirect-url.handler"
         timeout         = 5
