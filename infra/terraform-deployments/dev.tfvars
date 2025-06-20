@@ -1,3 +1,3 @@
-environment=dev
-aws_region=us-east-1
+environment="dev"
+aws_region="us-east-1"
 alert_email="cloudengrajputvarun@gmail.com"
