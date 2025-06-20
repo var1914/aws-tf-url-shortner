@@ -16,24 +16,10 @@ resource "aws_lambda_function" "this" {
     Environment = var.environment
     Project     = local.project_name
   }
-}
-
-## DynamoDB
-# DynamoDB table for storing short URLs
-resource "aws_dynamodb_table" "this" {
-  name         = local.table_name
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "short_id"
-
-  attribute {
-    name = "short_id"
-    type = "S"
-  }
-
-  tags = {
-    Environment = var.environment
-    Project     = local.project_name
-  }
+  depends_on = [ 
+    aws_iam_role_policy_attachment.this,
+    aws_iam_role_policy.lambda_dynamodb
+   ]
 }
 
 ## IAM 
@@ -80,33 +66,23 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
   })
 }
 
-## API Gateway
-resource "aws_api_gateway_rest_api" "this" {
-  name = "${local.project_name}-api-${var.environment}"
-}
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from Lambda"
 
-# API Gateway resources and methods for both create and redirect URLs APIs
-resource "aws_api_gateway_resource" "this" {
-  for_each = local.apis
-  rest_api_id = aws_api_gateway_rest_api.this.id
-  parent_id   = aws_api_gateway_rest_api.this.root_resource_id
-  path_part   = each.value.path_part
-}
-
-resource "aws_api_gateway_method" "this" {
-  for_each = local.apis
-  rest_api_id   = aws_api_gateway_rest_api.this.id
-  resource_id   = aws_api_gateway_resource.this[each.key].id
-  http_method   = each.value.http_method
-  authorization = each.value.authorization
-}
-
-resource "aws_api_gateway_integration" "this" {
-  for_each = local.apis
-  rest_api_id = aws_api_gateway_rest_api.this.id
-  resource_id = aws_api_gateway_resource.this[each.key].id
-  http_method = aws_api_gateway_method.this[each.key].http_method
-  integration_http_method = each.value.http_method
-  type                   = "AWS_PROXY"
-  uri                    = aws_lambda_function.this[each.key].invoke_arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = ["arn:aws:logs:*:*:*"]
+      }
+    ]
+  })
 }

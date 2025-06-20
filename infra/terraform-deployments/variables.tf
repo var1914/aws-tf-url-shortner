@@ -16,3 +16,9 @@ variable "api_keys" {
   default     = "demo-key-123,another-key-456"
   sensitive   = true
 }
+
+variable "alert_email" {
+  description = "Email address for CloudWatch alerts"
+  type        = string
+  default     = "cloudengrajputvarun@gmail.com"
+}
