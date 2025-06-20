@@ -72,7 +72,6 @@ resource "aws_api_gateway_method_settings" "this" {
   settings {
     throttling_rate_limit  = 100
     throttling_burst_limit = 200
-    logging_level         = "ERROR"
     data_trace_enabled    = false
     metrics_enabled       = true
   }
