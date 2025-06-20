@@ -5,7 +5,7 @@ const dynamodb = new DynamoDBClient({});
 
 const generateId = (): string => Math.random().toString(36).substring(2, 8);
 
-// Simple API key validation
+// Simple API key validation with proper empty token handling
 const validateApiKey = (authHeader: string | undefined): boolean => {
   if (!authHeader) return false;
   
@@ -16,11 +16,18 @@ const validateApiKey = (authHeader: string | undefined): boolean => {
     ? authHeader.substring(8)
     : authHeader;
 
+  // Trim and check if token is empty
+  const trimmedToken = token.trim();
+  if (!trimmedToken || trimmedToken === '') return false;
+
   // In production, you'd validate against a database or service
   // For this demo, we'll use environment variables
-  const validApiKeys = (process.env.VALID_API_KEYS).split(',');
-  
-  return validApiKeys.includes(token.trim());
+  const validApiKeys = (process.env.VALID_API_KEYS || '')
+    .split(',')
+    .map(key => key.trim())           // Remove whitespace from each key
+    .filter(key => key.length > 0);   // Remove empty strings
+
+  return validApiKeys.includes(trimmedToken);
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
