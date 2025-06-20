@@ -76,3 +76,7 @@ Set these under dev.tfvar/prod.tfvar:
 - `alert_email`: Your notification email
 - `aws_region`: Target AWS region
 - `envenvironment`: Environment Name
+
+Note: 
+### I have not `api_keys` as part of git repo, just following best practise, but in your local setup you can and deploy...
+### In real world, keys are managed using secrets manager or vaults, but for demo and time constraint, it will add to future enhancements
