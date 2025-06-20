@@ -25,9 +25,9 @@ jobs:
           
       - name: Package Lambda functions
         run: |
-          cd dist
           zip -r ../create-url.zip create-url.*
           zip -r ../redirect-url.zip redirect-url.*
+        working-directory: dist
           
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -41,18 +41,19 @@ jobs:
           
       - name: Terraform Init
         run: terraform init
+        working-directory: infra/terraform-deployments
         
       - name: Terraform Plan
         run: | 
-          cd infra/terraform-deployments
           # Ensure the workspace exists or create it
           terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           terraform plan -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+        working-directory: infra/terraform-deployments
         
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         run: | 
-          cd infra/terraform-deployments
           # Ensure the workspace exists or create it
           terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           terraform apply -auto-approve -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+        working-directory: infra/terraform-deployments
