@@ -12,7 +12,7 @@ locals {
         authorization = "NONE"
         environment = {
           TABLE_NAME = local.table_name
-          API_KEYS = var.api_keys
+          VALID_API_KEYS = var.api_keys
         }
     }
     redirect_url = {
