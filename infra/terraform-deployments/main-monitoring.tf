@@ -44,7 +44,6 @@ resource "aws_cloudwatch_metric_alarm" "api_gateway_4xx" {
 
   dimensions = {
     ApiName = aws_api_gateway_rest_api.this.name
-    Stage   = aws_api_gateway_deployment.this.stage_name
   }
 }
 
@@ -62,7 +61,6 @@ resource "aws_cloudwatch_metric_alarm" "api_gateway_latency" {
 
   dimensions = {
     ApiName = aws_api_gateway_rest_api.this.name
-    Stage   = aws_api_gateway_deployment.this.stage_name
   }
 }
 
