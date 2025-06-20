@@ -1,4 +1,10 @@
 {
+  "name": "url-shortener-ts",
+  "version": "1.0.0",
+  "description": "TypeScript URL Shortener",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@types/node": "^24.0.3",
     "@aws-sdk/client-dynamodb": "^3.830.0",
