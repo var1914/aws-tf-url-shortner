@@ -1,5 +1,4 @@
-
-
+## LAMBDA
 # Lambda function for creating and redirecting short URLs
 resource "aws_lambda_function" "this" {
   for_each = local.apis
@@ -21,6 +20,7 @@ resource "aws_lambda_function" "this" {
   }
 }
 
+## DynamoDB
 # DynamoDB table for storing short URLs
 resource "aws_dynamodb_table" "this" {
   name         = local.table_name
@@ -38,6 +38,8 @@ resource "aws_dynamodb_table" "this" {
   }
 }
 
+## IAM 
+# IAM role for Lambda functions
 resource "aws_iam_role" "this" {
   name = "${local.project_name}-lambda-${var.environment}"
 
@@ -55,6 +57,7 @@ resource "aws_iam_role" "this" {
   })
 }
 
+# Attach the basic execution role policy and custom DynamoDB access policy to the Lambda role
 resource "aws_iam_role_policy_attachment" "this" {
   role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -79,7 +82,7 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
   })
 }
 
-# API Gateway
+## API Gateway
 resource "aws_api_gateway_rest_api" "this" {
   name = "${local.project_name}-api-${var.environment}"
 }
