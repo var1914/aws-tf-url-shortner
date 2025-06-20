@@ -6,7 +6,7 @@ terraform {
   backend "s3" {
     bucket         = "terraform-state-varun-blogs"
     key            = "tf-state.tfstate"
-    region         = "us-east-1"
+    region         = "eu-central-1"
     encrypt        = true
   }
 }
