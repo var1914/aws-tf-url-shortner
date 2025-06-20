@@ -9,7 +9,7 @@ locals {
         timeout         = 10
         path_part = "shorten"
         http_method = "POST"
-        authorization = "AWS_IAM"
+        authorization = "NONE"
         environment = {
           TABLE_NAME = local.table_name
           API_KEYS = var.api_keys
