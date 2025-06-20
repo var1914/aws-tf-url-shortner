@@ -1,0 +1,54 @@
+name: Deploy URL Shortener
+
+on:
+  push:
+    branches: [main, develop]
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+          
+      - name: Package Lambda functions
+        run: |
+          cd dist
+          zip -r ../create-url.zip create-url.*
+          zip -r ../redirect.zip redirect.*
+          
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Terraform Init
+        run: terraform init
+        
+      - name: Terraform Plan
+        run: | 
+          terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          terraform plan -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+        
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+        run: | 
+          terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          terraform apply -auto-approve -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
