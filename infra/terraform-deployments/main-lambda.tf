@@ -18,6 +18,16 @@ resource "aws_lambda_function" "this" {
   }
 }
 
+resource "aws_lambda_permission" "api_gw" {
+  for_each = local.apis
+  
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.this[each.key].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.this.execution_arn}/*/*"
+}
+
 ## IAM 
 # IAM role for Lambda functions
 resource "aws_iam_role" "this" {
@@ -62,10 +72,9 @@ resource "aws_iam_role_policy" "lambda_dynamodb" {
   })
 }
 
-resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda_logging"
-  path        = "/"
-  description = "IAM policy for logging from Lambda"
+resource "aws_iam_role_policy" "lambda_logging" {
+  name = "${local.project_name}-lambda-logging-${var.environment}"
+  role = aws_iam_role.this.id
 
   policy = jsonencode({
     Version = "2012-10-17"

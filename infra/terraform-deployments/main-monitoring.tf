@@ -74,6 +74,28 @@ resource "aws_cloudwatch_metric_alarm" "api_gateway_latency" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "dynamodb_throttles" {
+  alarm_name          = "${local.project_name}-dynamodb-throttles-${var.environment}"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "SystemErrors"
+  namespace           = "AWS/DynamoDB"
+  period              = "300"
+  statistic           = "Sum"
+  threshold           = "0"
+  alarm_description   = "DynamoDB throttling detected"
+  alarm_actions       = [aws_sns_topic.alerts.arn]
+
+  dimensions = {
+    TableName = aws_dynamodb_table.this.name
+  }
+  
+  tags = {
+    Environment = var.environment
+    Project     = local.project_name
+  }
+}
+
 # SNS Topic for Alerts
 resource "aws_sns_topic" "alerts" {
   name = "${local.project_name}-alerts-${var.environment}"
