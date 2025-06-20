@@ -13,6 +13,7 @@ variable "aws_region" {
 variable "api_keys" {
   description = "Comma-separated list of valid API keys"
   type        = string
+  default = null
   sensitive   = true
 }
 
