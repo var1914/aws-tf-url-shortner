@@ -8,7 +8,7 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         run: |
           cd dist
           zip -r ../create-url.zip create-url.*
-          zip -r ../redirect.zip redirect.*
+          zip -r ../redirect-url.zip redirect-url.*
           
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
