@@ -9,9 +9,9 @@ resource "aws_cloudwatch_log_group" "api_gw_logs" {
 }
 
 # CloudWatch Alarms
+# Monitoring Lambda Errors, API Gateway 4XX Errors, Latency, and DynamoDB Throttles
 resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   for_each = local.apis
-  # Create an alarm for each Lambda function's errors
   alarm_name          = "${local.project_name}-${each.key}-errors-${var.environment}"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"

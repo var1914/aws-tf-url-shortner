@@ -1,3 +1,14 @@
+# URL Shortener Infrastructure Configuration
+# 
+# Architecture:
+# - API Gateway: Public endpoints for create/redirect
+# - Lambda: Serverless compute for business logic  
+# - DynamoDB: NoSQL storage with pay-per-request billing
+# - CloudWatch: Monitoring with SNS alerting
+#
+# Endpoints:
+# - POST /shorten: Create short URL (requires API key)
+# - GET /{id}: Redirect to original URL (public)
 locals {
   project_name = "url-shortener"
   table_name = "${local.project_name}-${var.environment}"

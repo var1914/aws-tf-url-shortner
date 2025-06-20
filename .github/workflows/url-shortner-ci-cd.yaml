@@ -6,7 +6,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-
+  TF_VAR_environment: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -48,14 +48,14 @@ jobs:
       - name: Terraform Plan
         run: | 
           # Ensure the workspace exists or create it
-          terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-          terraform plan -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          terraform workspace select -or-create=true ${{ env.TF_VAR_environment }}
+          terraform plan -var-file="${{ env.TF_VAR_environment }}.tfvars" -out=tfplan
         working-directory: infra/terraform-deployments
         
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         run: | 
           # Ensure the workspace exists or create it
-          terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
-          terraform apply -auto-approve -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
+          terraform workspace select -or-create=true ${{ env.TF_VAR_environment }}
+          terraform apply -auto-approve --var-file="${{ env.TF_VAR_environment }}.tfvars" tfplan
         working-directory: infra/terraform-deployments
