@@ -10,6 +10,10 @@ locals {
         path_part = "shorten"
         http_method = "POST"
         authorization = "AWS_IAM"
+        environment = {
+          TABLE_NAME = local.table_name
+          API_KEYS = var.api_keys
+        }
     }
     redirect_url = {
         filename         = "${path.root}/../../redirect-url.zip"
@@ -19,6 +23,9 @@ locals {
         path_part = "{id}"
         http_method = "GET"
         authorization = "NONE"
+        environment = {
+          TABLE_NAME = local.table_name
+        }
     }
   }
 

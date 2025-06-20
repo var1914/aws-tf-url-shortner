@@ -10,9 +10,7 @@ resource "aws_lambda_function" "this" {
   timeout         = each.value.timeout
 
   environment {
-    variables = {
-      TABLE_NAME = aws_dynamodb_table.this.name
-    }
+    variables = each.value.environment
   }
   tags = {
     Environment = var.environment
