@@ -1,18 +1,25 @@
 locals {
   project_name = "url-shortener"
   table_name = "${local.project_name}-${var.environment}"
-  lambda = {
-    create-url = {
-      filename = "create-url.zip"
-      function_name    = "${local.project_name}-create-${var.environment}"
-      handler         = "create-url.handler"
-      timeout         = 10
+  apis = {
+    create_url = {
+        filename = "create-url.zip"
+        function_name    = "${local.project_name}-create-${var.environment}"
+        handler         = "create-url.handler"
+        timeout         = 10
+        path_part = "shorten"
+        http_method = "POST"
+        authorization = "AWS_IAM"
     }
-    redirect-url = {
-      filename         = "redirect.zip"
-      function_name    = "${local.project_name}-redirect-${var.environment}"
-      handler         = "redirect-url.handler"
-      timeout         = 5
+    redirect_url = {
+        filename         = "redirect.zip"
+        function_name    = "${local.project_name}-redirect-${var.environment}"
+        handler         = "redirect-url.handler"
+        timeout         = 5
+        path_part = "{id}"
+        http_method = "GET"
+        authorization = "NONE"
     }
   }
+
 }
