@@ -44,11 +44,15 @@ jobs:
         
       - name: Terraform Plan
         run: | 
+          cd infra/terraform-deployments
+          # Ensure the workspace exists or create it
           terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           terraform plan -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
         
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
         run: | 
+          cd infra/terraform-deployments
+          # Ensure the workspace exists or create it
           terraform workspace select -or-create=true ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           terraform apply -auto-approve -var="environment=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}"
